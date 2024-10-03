@@ -1,11 +1,14 @@
 var socket = io();
 const API_KEY = 'AIzaSyC80EUqt8ErvmmJ-Q-5Srq2L72Ur0D3Mmg';
 let player;
+let detector;
 let currentVideoIndex = 0;
 let currentTime = 0;
 let username = "";
 let video_queue = {};
 let seconds = 0;
+let check_url = "";
+let url_pass = true;
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
@@ -60,12 +63,60 @@ window.onload = function() {
                     'onReady': onPlayerReady,
                     'onStateChange': onPlayerStateChange
                 }
-            });   
-
+            });
         }
 
+async function loadAndCheckVideo(videoId) {
+    return new Promise((resolve, reject) => {
+        if (detector) {
+            detector.destroy(); // Destroy the previous detector instance
+        }
+
+        detector = new YT.Player('detector', {
+            height: '315',
+            width: '560',
+            videoId: '', // Load later when ready
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,    // Hide player controls
+                'disablekb': 1,   // Disable keyboard controls
+                'modestbranding': 1, // Minimize YouTube branding
+                'rel': 0,         // Disable related videos at the end
+                'mute': 1,
+                'enablejsapi': 1   
+            },
+            events: {
+                'onReady': function(event) {
+                    setTimeout(function() {
+                        detector.loadVideoById(videoId);
+                    }, 1000);
+
+                    // Once the video loads, check it after a short delay
+                    setTimeout(() => {
+                        detector.stopVideo();
+                        url_pass = true;
+                        resolve(); // Video passed the check
+                    }, 2000); // Adjust this delay based on when you want to validate
+                },
+                'onError': function(event) {
+                    if (event.data == 101 || event.data == 150) {
+                        alert('Video is blocked. Try adding a different YouTube URL.');
+                        url_pass = false;
+                        reject(); // Video failed the check
+                    }
+                }
+            }
+        });
+    });
+}
+
+    
+
+
+
 function onPlayerReady(event) {
-    player.loadVideoById(video_queue[currentVideoIndex].video_id, currentTime);
+    setTimeout(function() {player.loadVideoById(video_queue[currentVideoIndex].video_id, currentTime);}, 10000);
+    
 }
 
 function onPlayerStateChange(event) {
@@ -113,7 +164,7 @@ function formatTime(seconds) {
   return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 }
 
-function addVideo() {
+async function addVideo() {
     const input = document.getElementById('itemInput');
     let newItemText = input.value.trim();
 
@@ -124,38 +175,40 @@ function addVideo() {
     }
 
     const youtubePrefix = "https://www.youtube.com/watch?v=";
-    
-    if (newItemText.includes(youtubePrefix)) {
-        const videoId = newItemText.split(youtubePrefix)[1];
+    const videoId = newItemText.split(youtubePrefix)[1];
 
-        fetchTitle(videoId).then(title => {
-            if (!title) {
-                console.error('Error adding video to the queue');
-                alert('Failed to fetch video details.');
-                return;
-            }
+    check_url = videoId;
 
-            // Emit the new video data to the server via Socket.IO
-            socket.emit('add_video', {
-                "title": title,
-                "video_id": videoId
+    try {
+        await loadAndCheckVideo(videoId);  // Wait for the video check to complete
+
+        if (url_pass && newItemText.includes(youtubePrefix)) {
+            fetchTitle(videoId).then(title => {
+                if (!title) {
+                    console.error('Error adding video to the queue');
+                    alert('Failed to fetch video details.');
+                    return;
+                }
+
+                // Emit the new video data to the server via Socket.IO
+                socket.emit('add_video', {
+                    "title": title,
+                    "video_id": videoId
+                });
+
+                // Clear input field after adding the video
+                input.value = '';
+
+                // Notify the chat about the new addition
+                socket.send(`${username} has added ${title} to the queue`);
+
+                socket.emit('update_queue');
             });
 
-            // Clear input field after adding the video
-            input.value = '';
-
-            // Notify the chat about the new addition
-            socket.send(`${username} has added ${title} to the queue`);
-
-            socket.emit('update_queue');
-
-        }).catch(error => {
-            console.error('Error adding video to the queue:', error);
-            alert('An error occurred while adding the video.');
-        });
-    } else {
-        console.error('Invalid YouTube URL');
-        alert('Please enter a valid YouTube URL.');
+            url_pass = true;
+        }
+    } catch (error) {
+        console.error('Error loading or checking video:', error);
     }
 }
 
