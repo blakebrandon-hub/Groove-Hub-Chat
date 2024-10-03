@@ -8,11 +8,8 @@ let video_queue = {};
 let seconds = 0;
 
 socket.on('sync_video', (data) => {
-
             video_queue = data.video_queue;
             currentTime = data.time;
-
-            console.log(`Current Time: ${currentTime}`)
 
             let element = document.getElementById('queueList');
             element.innerHTML = ""; // Clear the existing list
@@ -44,9 +41,6 @@ window.onload = function() {
 
 }
 
-// Listen for real-time sync updates from the server
-
-//setTimeout(function() {}, 5000);
 // Create an <iframe> (and YouTube player) after the API code downloads
  function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
@@ -70,41 +64,7 @@ window.onload = function() {
 
         }
 
-// Update server with current video time
-function updateCurrentTime() {
-    currentTime = player.getCurrentTime();
-    socket.emit('update_time', { time: player.getCurrentTime() });
-}
-
-// Tabbed Panels - DO NOT CHANGE
-function openTab(tabId) {
-    // Hide all panels
-    const panels = document.querySelectorAll('.tab-panel');
-    panels.forEach(panel => panel.classList.remove('active'));
-
-    // Remove active class from all tab buttons
-    const buttons = document.querySelectorAll('.tab-button');
-    buttons.forEach(button => button.classList.remove('active'));
-
-    // Show the clicked tab's panel and set the button to active
-    document.getElementById(tabId).classList.add('active');
-    const activeButton = Array.from(buttons).find(button => button.getAttribute('data-tab') === tabId);
-    if (activeButton) {
-        activeButton.classList.add('active');
-    }
-}
-
-// Initialize with the 'chat' tab open
-document.addEventListener('DOMContentLoaded', () => openTab('chat'));
-
-// Add event listeners to tab buttons
-document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', () => openTab(button.getAttribute('data-tab')));
-});
-
-
 function onPlayerReady(event) {
-
     player.loadVideoById(video_queue[currentVideoIndex].video_id, currentTime);
 }
 
@@ -132,8 +92,7 @@ function onPlayerStateChange(event) {
             }
 
             socket.emit('song_ended');
-        }
-            
+        }    
 }
 
 // Time Functions
@@ -142,7 +101,6 @@ function updateCurrentTime() {
   document.getElementById('currentTime').textContent = formatTime(currentTime);
   socket.emit('update_time', currentTime);
 }
-
 
 function updateDuration() { 
   var duration = player.getDuration(); // If this is synchronous
@@ -221,6 +179,32 @@ async function fetchTitle(videoId) {
   }
 }
 
+// Tabbed Panels - DO NOT CHANGE
+function openTab(tabId) {
+    // Hide all panels
+    const panels = document.querySelectorAll('.tab-panel');
+    panels.forEach(panel => panel.classList.remove('active'));
+
+    // Remove active class from all tab buttons
+    const buttons = document.querySelectorAll('.tab-button');
+    buttons.forEach(button => button.classList.remove('active'));
+
+    // Show the clicked tab's panel and set the button to active
+    document.getElementById(tabId).classList.add('active');
+    const activeButton = Array.from(buttons).find(button => button.getAttribute('data-tab') === tabId);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+}
+
+// Initialize with the 'chat' tab open
+document.addEventListener('DOMContentLoaded', () => openTab('chat'));
+
+// Add event listeners to tab buttons
+document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', () => openTab(button.getAttribute('data-tab')));
+});
+
 // Toggle mute/unmute with checkbox click
 document.getElementById('muteToggle').addEventListener('change', function() {
   if (this.checked) {
@@ -230,36 +214,36 @@ document.getElementById('muteToggle').addEventListener('change', function() {
   }
 });
 
-        socket.on('message', function(msg) {
-            var messagesDiv = document.getElementById('messages');
-            var newMessage = document.createElement('p');
-            newMessage.innerText = msg;
-            messagesDiv.appendChild(newMessage);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Auto-scroll to the bottom
-        });
+function sendMessage() {
+    var input = document.getElementById('myMessage');
+    var message = input.value;
+    if (message.trim() !== "") {
+        socket.send(`${username}: ${message}`);
+        input.value = '';
+    }
+}
 
-        function sendMessage() {
-            var input = document.getElementById('myMessage');
-            var message = input.value;
-            if (message.trim() !== "") {
-                socket.send(`${username}: ${message}`);
-                input.value = '';
-            }
-        }
+function upvote() {
+    socket.send(`${username} likes "${video_queue[currentVideoIndex].title}"`);
+}
 
-        function upvote() {
-            socket.send(`${username} likes "${video_queue[currentVideoIndex].title}"`);
-        }
+function downvote() {
+    socket.send(`${username} dislikes "${video_queue[currentVideoIndex].title}"`);
+}
 
-        function downvote() {
-            socket.send(`${username} dislikes "${video_queue[currentVideoIndex].title}"`);
-        }
+function updateNowPlaying() {
+    video_title = video_queue[currentVideoIndex].title;
+    element = document.getElementById('title');
+    element.innerText = video_title;
+}
 
-        function updateNowPlaying() {
-            video_title = video_queue[currentVideoIndex].title;
-            element = document.getElementById('title');
-            element.innerText = video_title;
-        }
+socket.on('message', function(msg) {
+    var messagesDiv = document.getElementById('messages');
+    var newMessage = document.createElement('p');
+    newMessage.innerText = msg;
+    messagesDiv.appendChild(newMessage);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Auto-scroll to the bottom
+});
 
 socket.on('update_queue', function(queue) {
     video_queue = queue;
