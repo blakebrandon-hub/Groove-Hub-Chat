@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groove Hub</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand">
+                <span class="logo">
+                    <i class="logo-icon">🎵</i> Groove Hub
+                </span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+
+        <!-- Video Area -->
+        <div class="video-area">
+
+            <div id="player-container">
+              <div id="player"></div>
+            </div>
+
+            <!-- Breaks UI if you take it away-->
+            <div class="now-playing-container">
+                <div id="now-playing">
+            </div>
+
+            <!-- Mute Checkbox -->
+            <label>
+                    <input type="checkbox" id="muteToggle" checked> Mute
+            </label>
+
+            <!-- Now Playing and Current Time / Duration-->
+            <p>Now Playing: <span id="title"></span></p>
+            <p><span id="currentTime">0:00</span>/<span id="duration">0:00</span></p>
+
+            <!-- Upvote and Downvote Buttons-->
+            <div class="vote-buttons">
+                <button id="upvote" class="vote-button" aria-label="Upvote" onclick="upvote()">👍</button>
+                <button id="downvote" class="vote-button" aria-label="Downvote" onclick="downvote()">👎</button>
+            </div>
+        </div>
+    </div>
+
+        <!-- Tabbed Panel -->
+        <div class="tab-container">
+            <!-- Tab buttons -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="chat">Chat</button>
+                <button class="tab-button" data-tab="queue">Queue</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="chat" class="tab-panel active">
+                                                                    <input type="text" id="myMessage" placeholder="Type a message...">
+                        <button id="message-button" onclick="sendMessage()">Send</button> 
+                    <div class="message-container">
+
+
+
+                        <div id="messages"></div>
+                        <!-- Messages displayed here-->        
+
+
+                    </div>
+
+                </div>
+
+                <div id="queue" class="tab-panel">
+                    <div class="queue-content">
+                        <input type="text" id="itemInput" placeholder="Enter a YouTube URL">
+                        <button id="triggerButton" onclick="addVideo()">Submit</button>
+                        <h4>Video Queue</h4>
+                        <ul id="queueList">
+
+                        <!-- Queue list displayed here-->                 
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- Skip Song Button-->
+    
+        </div>
+
+
+
+
+    </div>
+
+
+    <br>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container"></div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Groove Hub. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
