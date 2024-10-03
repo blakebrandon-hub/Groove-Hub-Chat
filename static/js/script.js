@@ -115,9 +115,6 @@ function onPlayerStateChange(event) {
     }
 
     if (event.data === YT.PlayerState.PLAYING) {
-        //getCurrentTime();
-
-        // Update the duration when available
         updateDuration();
           
         setInterval(updateCurrentTime, 1000);  // Update server every second
@@ -129,46 +126,15 @@ function onPlayerStateChange(event) {
             // Increment the index to load the next video, but stop if we're at the end
             if (currentVideoIndex < Object.keys(video_queue).length - 1) {
                 currentVideoIndex++;
-                player.loadVideoById(video_queue[currentVideoIndex].video_id);
-                updateNowPlaying();
+
             } else {
                 console.log("End of the queue");
             }
+
+            socket.emit('song_ended');
         }
             
 }
-
-
-function skipSong() {
-
-    // Check if video_queue is empty
-    if (video_queue.length === 0) {
-        player.stopVideo();
-        return; // Exit the function if there are no videos
-    }
-
-    socket.emit('song_ended', function() {
-    update_queue(video_queue); // Call update_queue with the latest video_queue data
-});
-
-    // Increment index only if there's another video
-    if (currentVideoIndex < Object.keys(video_queue).length - 1) {
-        currentVideoIndex++;
-        player.loadVideoById(video_queue[currentVideoIndex].video_id);
-        updateNowPlaying();
-    } else {
-        console.log("No more videos to skip to.");
-    }
-
-    // Disable skip button for five seconds
-    const skipButton = document.getElementById('skip-button');
-    skipButton.disabled = true;
-
-    setTimeout(function() {
-        skipButton.disabled = false;
-    }, 5000);
-}
-
 
 // Time Functions
 function updateCurrentTime() {
