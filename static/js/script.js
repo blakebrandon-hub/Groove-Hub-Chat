@@ -174,15 +174,30 @@ async function addVideo() {
         return;
     }
 
+    let videoId = null;
+
+    // Check if it's a standard YouTube link
     const youtubePrefix = "https://www.youtube.com/watch?v=";
-    const videoId = newItemText.split(youtubePrefix)[1];
+    const youtuBePrefix = "https://youtu.be/";
+
+    if (newItemText.includes(youtubePrefix)) {
+        videoId = newItemText.split(youtubePrefix)[1].split('&')[0]; // Extract video ID and ignore parameters
+    } 
+    // Check if it's a youtu.be link
+    else if (newItemText.includes(youtuBePrefix)) {
+        videoId = newItemText.split(youtuBePrefix)[1].split('?')[0]; // Extract video ID and ignore parameters
+    } else {
+        console.error('Invalid YouTube URL');
+        alert('Please enter a valid YouTube URL.');
+        return;
+    }
 
     check_url = videoId;
 
     try {
         await loadAndCheckVideo(videoId);  // Wait for the video check to complete
 
-        if (url_pass && newItemText.includes(youtubePrefix)) {
+        if (url_pass && videoId) {
             fetchTitle(videoId).then(title => {
                 if (!title) {
                     console.error('Error adding video to the queue');
