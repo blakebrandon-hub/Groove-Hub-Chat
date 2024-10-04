@@ -1,4 +1,4 @@
-/* General Styles */
+/* Gener/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -7,6 +7,7 @@ body {
     flex-direction: column;
     align-items: center;
     list-style-type: none;
+    box-sizing: border-box;
 }
 
         ul {
@@ -81,25 +82,7 @@ body {
     border-radius: 4px;
 }
 
-/* Responsive Navbar */
-@media (max-width: 768px) {
-    .navbar-container {
-        flex-direction: column;
-        align-items: flex-start;
-        position: relative;
-    }
 
-    .navbar-menu {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .navbar-menu.active {
-        display: flex;
-    }
-}
 
 .container {
     display: flex;
@@ -109,6 +92,12 @@ body {
     padding-top: 70px; /* Adjusted for fixed navbar */
     box-sizing: border-box;
     justify-content: flex-start;
+}
+
+@media (max-width: 600px) {
+    .container {
+        flex-direction: column;
+    }
 }
 
 .video-area {
@@ -161,7 +150,7 @@ body {
 
 .tab-container {
     flex: 1.5;
-    max-width: 330px;
+    width: 100%;
     padding: 0;
     margin-left: auto;
     height: 500px;
@@ -217,25 +206,26 @@ body {
     flex-direction: column;
     height: 100%;
     border: none;
+
 }
 
         #messages {
 
             height: 370px;
-            width: 290px;
+            width: 100%;
             overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         #queueList {
             height: 322px;
-            width: 290px;
+            width: 95%;
             overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
 .message-container {
@@ -250,25 +240,7 @@ body {
     flex: 1;
     padding: 10px;
     margin-right: 10px;
-    width: 63%;
-}
-
-#message-button {
-
-}
-
-#skip {
-  text-align: right;
-  margin-right: 20px; /* Optional: Adds a bit of spacing from the right edge */
-}
-
-#skip-button {
-  padding: 10px 20px;
-  background-color: #f04a42;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
+    width: 70%;
 }
 
 button {
@@ -281,24 +253,6 @@ button {
 
 button:hover {
     background-color: #444;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-        align-items: stretch;
-        margin-top: 5%;
-    }
-
-    .video-area {
-        padding-right: 0;
-    }
-
-    .tab-container {
-        max-width: 100%;
-        margin-left: 0;
-    }
 }
 
 /* Footer Styles */
@@ -383,3 +337,4 @@ button:hover {
   z-index: 1; /* Place the overlay above the player */
   pointer-events: all; /* Enable clicks on the overlay */
 }
+
