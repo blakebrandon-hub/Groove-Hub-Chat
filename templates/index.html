@@ -63,17 +63,15 @@
 
             <div class="tab-content">
                 <div id="chat" class="tab-panel active">
-                                                                    <input type="text" id="myMessage" placeholder="Type a message...">
-                        <button id="message-button" onclick="sendMessage()">Send</button> 
+
                     <div class="message-container">
-
-
 
                         <div id="messages"></div>
                         <!-- Messages displayed here-->        
-
-
                     </div>
+
+                        <input type="text" id="myMessage" placeholder="Type a message...">
+                        <button id="message-button" onclick="sendMessage()">Send</button> 
 
                 </div>
 
@@ -101,13 +99,13 @@
 
     <br>
 
-    <!-- Footer -->
+    <!-- Footer 
     <footer class="footer">
         <div class="footer-container"></div>
         <div class="footer-bottom">
             <p>&copy; 2024 Groove Hub. All rights reserved.</p>
         </div>
-    </footer>
+    </footer>-->
     
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
