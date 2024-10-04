@@ -110,6 +110,9 @@ async function loadAndCheckVideo(videoId) {
     });
 }
 
+    
+
+
 
 function onPlayerReady(event) {
     setTimeout(function() {player.loadVideoById(video_queue[currentVideoIndex].video_id, currentTime);}, 10000);
@@ -255,13 +258,20 @@ document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => openTab(button.getAttribute('data-tab')));
 });
 
-// Toggle mute/unmute with checkbox click
+// Mute Checkbox
 document.getElementById('muteToggle').addEventListener('change', function() {
   if (this.checked) {
     player.mute();            // Mute the video when checked
   } else {
     player.unMute();          // Unmute the video when unchecked
   }
+});
+
+// Press enter to send message
+document.getElementById('myMessage').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        sendMessage(); // Calls the sendMessage function
+    }
 });
 
 function sendMessage() {
