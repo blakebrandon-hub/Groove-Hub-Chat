@@ -127,7 +127,7 @@ function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PLAYING) {
 
-        const video_title = { title: event.target.getVideoData().title }; // Get the title from the API
+        const video_title = event.target.getVideoData().title }; // Get the title from the API
         updateDuration();
           
         setInterval(updateCurrentTime, 1000);  // Update server every second
