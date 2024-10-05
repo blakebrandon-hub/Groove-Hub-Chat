@@ -319,7 +319,7 @@ function updateNowPlaying() {
 
     // Polling function to wait for the title to be available
     const checkTitle = setInterval(() => {
-        if (video.title) {
+        if (video_title) {
             // Update the DOM with the title
             element = document.getElementById('title').innerText = video_title;
             clearInterval(checkTitle); // Stop checking once the title is set
