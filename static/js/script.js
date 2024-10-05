@@ -134,15 +134,18 @@ function onPlayerStateChange(event) {
             }
         
     if (event.data === YT.PlayerState.ENDED) {
-        // Increment the index to load the next video, but stop if we're at the end
+        // Notify the server that the song has ended
+        socket.emit('song_ended');
+
+        // Increment the index to load the next video
         if (currentVideoIndex < Object.keys(video_queue).length - 1) {
             currentVideoIndex++;
-            player.loadVideoById(video_queue[currentVideoIndex].video_id); // Load the next video
+            const nextVideoId = video_queue[currentVideoIndex].video_id; // Get the next video's ID
+            player.loadVideoById(nextVideoId, 0); // Load the next video, starting from the beginning
             updateNowPlaying(); // Update the now playing title
         } else {
-            console.log("End of the queue");
+            console.log("End of the queue"); // Log if it's the end of the queue
         }
-        socket.emit('song_ended'); // Notify the server that the song has ended
     }
 }
 
