@@ -126,11 +126,13 @@ function onPlayerStateChange(event) {
     }
 
     if (event.data === YT.PlayerState.PLAYING) {
+
+        const video_title = { title: event.target.getVideoData().title }; // Get the title from the API
         updateDuration();
           
         setInterval(updateCurrentTime, 1000);  // Update server every second
 
-          updateNowPlaying();
+          updateNowPlaying(video_title);
             }
         
     if (event.data === YT.PlayerState.ENDED) {
@@ -309,24 +311,9 @@ function downvote() {
     socket.send(`${username} dislikes "${video_queue[currentVideoIndex].title}"`);
 }
 
-function updateNowPlaying() {
-    // Check if video object is defined
-    video_title = video_queue[currentVideoIndex].title;
-    if (!video_title) {
-        console.error("Video object is undefined");
-        return;
-    }
-
-    // Polling function to wait for the title to be available
-    const checkTitle = setInterval(() => {
-        if (video_title) {
-            // Update the DOM with the title
-            element = document.getElementById('title').innerText = video_title;
-            clearInterval(checkTitle); // Stop checking once the title is set
-        } else {
-            console.log("Waiting for title...");
-        }
-    }, 500); // Check every 100 milliseconds
+function updateNowPlaying(video_title) {
+    element = document.getElementById('title');
+    element.innerText = video_title;
 }
 
 socket.on('message', function(msg) {
