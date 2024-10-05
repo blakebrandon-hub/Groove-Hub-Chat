@@ -310,9 +310,23 @@ function downvote() {
 }
 
 function updateNowPlaying() {
+    // Check if video object is defined
     video_title = video_queue[currentVideoIndex].title;
-    element = document.getElementById('title');
-    element.innerText = video_title;
+    if (!video_title) {
+        console.error("Video object is undefined");
+        return;
+    }
+
+    // Polling function to wait for the title to be available
+    const checkTitle = setInterval(() => {
+        if (video.title) {
+            // Update the DOM with the title
+            element = document.getElementById('title').innerText = video_title;
+            clearInterval(checkTitle); // Stop checking once the title is set
+        } else {
+            console.log("Waiting for title...");
+        }
+    }, 500); // Check every 100 milliseconds
 }
 
 socket.on('message', function(msg) {
