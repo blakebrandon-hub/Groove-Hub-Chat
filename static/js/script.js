@@ -140,13 +140,14 @@ function onPlayerStateChange(event) {
         socket.emit('song_ended');
 
         // Increment the index to load the next video
-        if (currentVideoIndex < Object.keys(video_queue).length - 1) {
-            currentVideoIndex++;
+        currentVideoIndex++; // Move this line out of the condition
+        if (currentVideoIndex < Object.keys(video_queue).length) {
             const nextVideoId = video_queue[currentVideoIndex].video_id; // Get the next video's ID
             player.loadVideoById(nextVideoId, 0); // Load the next video, starting from the beginning
-            updateNowPlaying(); // Update the now playing title
+            updateNowPlaying(video_queue[currentVideoIndex].title); // Update the now playing title
         } else {
             console.log("End of the queue"); // Log if it's the end of the queue
+            currentVideoIndex--; // Revert index back to the last video to prevent overflow
         }
     }
 }
