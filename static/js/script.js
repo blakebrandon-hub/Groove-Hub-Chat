@@ -9,6 +9,7 @@ let video_queue = {};
 let seconds = 0;
 let check_url = "";
 let url_pass = true;
+let currentVideoTitle = ""
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
@@ -127,12 +128,12 @@ function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PLAYING) {
 
-        const video_title = event.target.getVideoData().title; // Get the title from the API
+        
         updateDuration();
           
         setInterval(updateCurrentTime, 1000);  // Update server every second
 
-          updateNowPlaying(video_title);
+          updateNowPlaying();
             }
         
     if (event.data === YT.PlayerState.ENDED) {
@@ -144,7 +145,7 @@ function onPlayerStateChange(event) {
         if (currentVideoIndex < Object.keys(video_queue).length) {
             const nextVideoId = video_queue[currentVideoIndex].video_id; // Get the next video's ID
             player.loadVideoById(nextVideoId, 0); // Load the next video, starting from the beginning
-            updateNowPlaying(video_queue[currentVideoIndex].title); // Update the now playing title
+            updateNowPlaying(); // Update the now playing title
         } else {
             console.log("End of the queue"); // Log if it's the end of the queue
             currentVideoIndex--; // Revert index back to the last video to prevent overflow
@@ -221,7 +222,7 @@ async function addVideo() {
                 input.value = '';
 
                 // Notify the chat about the new addition
-                socket.send(`${username} added ${title}`);
+                socket.send(`${username} has added ${title} to the queue`);
 
                 socket.emit('update_queue');
             });
@@ -305,16 +306,22 @@ function sendMessage() {
 }
 
 function upvote() {
-    socket.send(`${username} likes "${video_queue[currentVideoIndex].title}"`);
+    var videoData = player.getVideoData();
+    var videoTitle = videoData.title;
+    socket.send(`${username} likes "${videoTitle}"`);
 }
 
 function downvote() {
-    socket.send(`${username} dislikes "${video_queue[currentVideoIndex].title}"`);
+    var videoData = player.getVideoData(); 
+    var videoTitle = videoData.title;
+    socket.send(`${username} dislikes "${videoTitle}"`);
 }
 
-function updateNowPlaying(video_title) {
-    element = document.getElementById('title');
-    element.innerText = video_title;
+function updateNowPlaying() {
+    var videoData = player.getVideoData(); 
+    var videoTitle = videoData.title;
+    var element = document.getElementById("title");
+    element.innerText = videoTitle; // Fixed variable name
 }
 
 socket.on('message', function(msg) {
