@@ -221,7 +221,7 @@ async function addVideo() {
                 input.value = '';
 
                 // Notify the chat about the new addition
-                socket.send(`${username} added ${title} to the queue`);
+                socket.send(`${username} added ${title}`);
 
                 socket.emit('update_queue');
             });
