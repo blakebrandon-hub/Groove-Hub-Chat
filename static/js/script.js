@@ -2,14 +2,12 @@ var socket = io();
 const API_KEY = 'AIzaSyC80EUqt8ErvmmJ-Q-5Srq2L72Ur0D3Mmg';
 let player;
 let detector;
-let currentVideoIndex = 0;
 let currentTime = 0;
 let username = "";
 let video_queue = {};
 let seconds = 0;
 let check_url = "";
 let url_pass = true;
-let currentVideoTitle = ""
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
@@ -116,7 +114,7 @@ async function loadAndCheckVideo(videoId) {
 
 
 function onPlayerReady(event) {
-    setTimeout(function() {player.loadVideoById(video_queue[currentVideoIndex].video_id, currentTime);}, 10000);
+    setTimeout(function() {player.loadVideoById(video_queue[0].video_id, currentTime);}, 10000);
     
 }
 
@@ -128,7 +126,6 @@ function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PLAYING) {
 
-        
         updateDuration();
           
         setInterval(updateCurrentTime, 1000);  // Update server every second
@@ -137,19 +134,14 @@ function onPlayerStateChange(event) {
             }
         
     if (event.data === YT.PlayerState.ENDED) {
-        // Notify the server that the song has ended
-        socket.emit('song_ended');
 
-        // Increment the index to load the next video
-        currentVideoIndex++; // Move this line out of the condition
-        if (currentVideoIndex < Object.keys(video_queue).length) {
-            const nextVideoId = video_queue[currentVideoIndex].video_id; // Get the next video's ID
-            player.loadVideoById(nextVideoId, 0); // Load the next video, starting from the beginning
-            updateNowPlaying(); // Update the now playing title
-        } else {
+            socket.emit('song_ended');
+
+
+        if (video_queue.length < 1) {
             console.log("End of the queue"); // Log if it's the end of the queue
-            currentVideoIndex--; // Revert index back to the last video to prevent overflow
-        }
+        } 
+            
     }
 }
 
@@ -352,10 +344,12 @@ socket.on('update_queue', function(queue) {
     });
 
 
-            // Check if it's the first video and load it
-            if (videoKeys.length === 1) {
-                player.loadVideoById(video_queue[0].video_id);
-                updateNowPlaying();
-            }
-
-     });
+    // Check if the player is currently playing
+    if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
+        // Check if it's the first video in the queue and load it
+        if (videoKeys.length >= 1) {
+            player.loadVideoById(video_queue[0].video_id);
+            updateNowPlaying(); // Update the "Now Playing" title
+        }
+    }
+});
