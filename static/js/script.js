@@ -32,11 +32,11 @@ socket.on('sync_video', (data) => {
 window.onload = function() {
    
     //Prompt user for username
-    username = prompt("Please enter your username:");
+    username = prompt("Please enter a username:");
 
     // Correct check for an empty username, prompting until valid input
     while (!username) {
-        username = prompt("Username cannot be empty. Please enter your username:");
+        username = prompt("Username cannot be empty. Please enter a username:");
     }
 
     // Notify the server that a user has joined the chatroom
