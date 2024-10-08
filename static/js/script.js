@@ -8,6 +8,7 @@ let video_queue = {};
 let seconds = 0;
 let check_url = "";
 let url_pass = true;
+let chat_sounds = false;
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
@@ -272,7 +273,7 @@ document.querySelectorAll('.tab-button').forEach(button => {
     button.addEventListener('click', () => openTab(button.getAttribute('data-tab')));
 });
 
-// Mute Checkbox
+// Mute Video Checkbox
 document.getElementById('muteToggle').addEventListener('change', function() {
   if (this.checked) {
     player.mute();            // Mute the video when checked
@@ -280,6 +281,24 @@ document.getElementById('muteToggle').addEventListener('change', function() {
     player.unMute();          // Unmute the video when unchecked
   }
 });
+
+// Mute Chat Checkbox
+document.getElementById('muteChatToggle').addEventListener('change', function() {
+    if (this.checked === true) {  // Use === for comparison
+        chat_sounds = false;
+    } else {
+        chat_sounds = true;
+    }
+});
+
+// Play chat sound
+function playSound() {
+    if (chat_sounds === true) {
+        var audio = document.getElementById('chat-sound');
+        audio.play();
+    }
+}
+
 
 // Press enter to send message
 document.getElementById('myMessage').addEventListener('keydown', function(event) {
@@ -291,23 +310,42 @@ document.getElementById('myMessage').addEventListener('keydown', function(event)
 function sendMessage() {
     var input = document.getElementById('myMessage');
     var message = input.value;
+    
+    // Check if the message is not just empty spaces
     if (message.trim() !== "") {
-        socket.send(`${username}: ${message}`);
+        var s = `${username}: ${message}`;
+        
+        // Send the message through the socket
+        socket.send(s);
+        
+        // Clear the input field
         input.value = '';
-    }
-}
+
+        // Play sound only if it's a regular chat message
+        if (!message.includes("likes")) {
+            playSound();  // Play sound only when sending a regular chat message
+        }
+    }  // Close the outer if block
+}  // Close the sendMessage function
+
 
 function upvote() {
     var videoData = player.getVideoData();
     var videoTitle = videoData.title;
+
+    // No sound should be played during upvote, so just send the message
     socket.send(`${username} likes "${videoTitle}"`);
 }
 
 function downvote() {
-    var videoData = player.getVideoData(); 
+    var videoData = player.getVideoData();
     var videoTitle = videoData.title;
+
+    // No sound should be played during downvote, so just send the message
     socket.send(`${username} dislikes "${videoTitle}"`);
 }
+
+
 
 function updateNowPlaying() {
     var videoData = player.getVideoData(); 
@@ -322,6 +360,7 @@ socket.on('message', function(msg) {
     newMessage.innerText = msg;
     messagesDiv.appendChild(newMessage);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Auto-scroll to the bottom
+    playSound();
 });
 
 socket.on('update_queue', function(queue) {
