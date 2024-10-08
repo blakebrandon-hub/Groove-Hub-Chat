@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Groove Hub</title>
+    <audio id="chat-sound" src="{{ url_for('static', filename='sounds/message.mp3') }}" preload="auto"></audio>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -74,7 +75,6 @@
 
 
                           <label style="font-size: 17px;>
-                        <audio id="chat-sound" src="{{ url_for( 'static', filename='sounds/message.mp3') }}" preload="auto"></audio>
                         <input type="checkbox" id="muteChatToggle" " checked> Mute Chat
                     </label>
 
