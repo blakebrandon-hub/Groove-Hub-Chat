@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.3/socket.io.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    
 </head>
 <body>
 
@@ -38,9 +39,9 @@
                 <div id="now-playing">
             </div>
 
-            <!-- Mute Checkbox -->
+            <!-- Mute Video Checkbox -->
             <label>
-                    <input type="checkbox" id="muteToggle" checked> Mute
+                    <input type="checkbox" id="muteToggle" checked> Mute Video
             </label>
 
             <!-- Now Playing and Current Time / Duration-->
@@ -71,10 +72,22 @@
                         <!-- Messages displayed here-->        
                     </div>
 
+
+                          <label >
+                        <audio id="chat-sound" src="{{ url_for( 'static', filename='sounds/message.mp3') }}" preload="auto"></audio>
+                        <input type="checkbox" id="muteChatToggle" style="font-size: 3px;" checked> Mute Chat Sounds
+                    </label>
+
+
+
                         <input type="text" id="myMessage" placeholder="Type a message...">
                         <button id="message-button" onclick="sendMessage()">Send</button> 
 
+
+
                 </div>
+
+
 
                 <div id="queue" class="tab-panel">
                     <div class="queue-content">
