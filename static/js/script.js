@@ -9,10 +9,12 @@ let seconds = 0;
 let check_url = "";
 let url_pass = true;
 let chat_sounds = false;
+let sessionId = "";
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
             currentTime = data.time;
+            sessionId = data.session_id;
 
             let element = document.getElementById('queueList');
             element.innerHTML = ""; // Clear the existing list
@@ -32,11 +34,11 @@ socket.on('sync_video', (data) => {
 window.onload = function() {
    
     //Prompt user for username
-    username = prompt("Please enter a username:");
+    username = prompt("Please enter your username:");
 
     // Correct check for an empty username, prompting until valid input
     while (!username) {
-        username = prompt("Username cannot be empty. Please enter a username:");
+        username = prompt("Username cannot be empty. Please enter your username:");
     }
 
     // Notify the server that a user has joined the chatroom
@@ -304,6 +306,21 @@ function playSound() {
 document.getElementById('myMessage').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         sendMessage(); // Calls the sendMessage function
+    }
+});
+
+// Detect when the user exits and re-enters the app (visibility change)
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        socket.emit('handle_connect')
+
+        setTimeout(function() {
+            if (document.visibilityState === "visible") {
+                socket.emit('handle_connect')
+
+            }
+        }, 5000);
+
     }
 });
 
