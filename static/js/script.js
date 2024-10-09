@@ -111,7 +111,7 @@ async function loadAndCheckVideo(videoId) {
 
 
 function onPlayerReady(event) {
-    setTimeout(function() {player.loadVideoById(video_queue[0].video_id, currentTime);}, 1000);
+    player.loadVideoById(video_queue[0].video_id, currentTime)
     
 }
 
@@ -120,9 +120,8 @@ function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PAUSED) {
 
         var player_time = player.getCurrentTime()
-        var time_gone = 5;
 
-            setTimeout(function() {player.loadVideoById(video_queue[0].video_id, player_time + time_gone)}, 100);
+        player.loadVideoById(video_queue[0].video_id, player_time);
             
     }
 
