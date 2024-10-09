@@ -3,13 +3,15 @@ const API_KEY = 'AIzaSyC80EUqt8ErvmmJ-Q-5Srq2L72Ur0D3Mmg';
 let player;
 let detector;
 let currentTime = 0;
-let username = "";
 let video_queue = {};
 let seconds = 0;
 let check_url = "";
 let url_pass = true;
 let chat_sounds = false;
-let sessionId = "";
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const username = urlParams.get('username')
+
 
 socket.on('sync_video', (data) => {
             video_queue = data.video_queue;
@@ -33,14 +35,6 @@ socket.on('sync_video', (data) => {
 
 window.onload = function() {
    
-    //Prompt user for username
-    username = prompt("Please enter your username:");
-
-    // Correct check for an empty username, prompting until valid input
-    while (!username) {
-        username = prompt("Username cannot be empty. Please enter your username:");
-    }
-
     // Notify the server that a user has joined the chatroom
     socket.send(`${username} joined the room`);
 
