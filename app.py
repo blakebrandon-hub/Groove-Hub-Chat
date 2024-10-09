@@ -12,16 +12,17 @@ app.secret_key = os.urandom(24)
 video_queue = {}
 current_time = 0
 
-
 @app.route('/')
+def landing_page():
+    return render_template('landing_page.html')
+
+@app.route('/groove-hub')
 def index():
     return render_template('index.html')
 
 @socketio.on('message')
 def handle_message(msg):
     send(msg, broadcast=True)
-
-
 
 @socketio.on('connect')
 def handle_connect():
