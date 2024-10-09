@@ -1,11 +1,12 @@
 from flask import Flask, render_template, jsonify, request, session
 from flask_socketio import SocketIO, emit, send
 import uuid
-
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 socketio = SocketIO(app, async_mode='gevent')
+app.secret_key = os.urandom(24) 
 
 # Initialize an empty queue
 video_queue = {}
@@ -20,11 +21,18 @@ def index():
 def handle_message(msg):
     send(msg, broadcast=True)
 
+
+
 @socketio.on('connect')
 def handle_connect():
     global current_video, current_time
+
+    # Generate a unique session ID for each user when they connect
+    session_id = os.urandom(16).hex()  # Random 16-byte string as session ID
+    session['session_id'] = session_id  # Store in Flask session
+
     # When a new user joins, send them the current video and time
-    emit('sync_video', {'video_queue': video_queue, 'time': round(current_time)})
+    emit('sync_video', {'video_queue': video_queue, 'time': round(current_time), 'session_id': session_id});
 
 @socketio.on('update_time')
 def handle_update_time(data):
