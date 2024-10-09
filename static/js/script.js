@@ -126,7 +126,7 @@ function onPlayerStateChange(event) {
     if (event.data === YT.PlayerState.PAUSED) {
 
         var player_time = player.getCurrentTime()
-        var time_gone = 0;
+        var time_gone = 5;
 
             setTimeout(function() {player.loadVideoById(video_queue[0].video_id, player_time + time_gone)}, 100);
             
