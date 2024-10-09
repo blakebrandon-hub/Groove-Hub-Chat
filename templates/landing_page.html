@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <script type="text/javascript">
+    
+    //Prompt user for username
+    username = prompt("Please enter a username:");
+
+    // Correct check for an empty username, prompting until valid input
+    while (!username) {
+        username = prompt("Username cannot be empty. Please enter a username:");
+    }
+
+    // Redirect to the next page, passing the username as a URL parameter
+    window.location.href = "/groove-hub?username=" + encodeURIComponent(username);
+
+    </script>
+<body>
+
+
+</body>
+</html>
