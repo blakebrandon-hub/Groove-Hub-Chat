@@ -117,7 +117,7 @@ async function loadAndCheckVideo(videoId) {
 
 
 function onPlayerReady(event) {
-    setTimeout(function() {player.loadVideoById(video_queue[0].video_id, currentTime);}, 10000);
+    setTimeout(function() {player.loadVideoById(video_queue[0].video_id, currentTime);}, 1000);
     
 }
 
