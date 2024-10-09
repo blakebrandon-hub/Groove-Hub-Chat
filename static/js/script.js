@@ -125,9 +125,13 @@ function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PAUSED) {
 
+        var player_time = 0;
+        var time_gone = 0;
+        
         setTimeout(function() {
-            player.playVideo();
-        }, 3000);
+            player.loadVideoById(video_queue[0].video_id, player_time + time_gone)
+        }, time_gone = time_gone + 1);
+
         
     }
 
