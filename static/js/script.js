@@ -124,7 +124,11 @@ function onPlayerReady(event) {
 function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PAUSED) {
-        player.playVideo();  // Restart video if it is paused
+
+        setTimeout(function() {
+            player.playVideo();
+        }, 3000);
+        
     }
 
     if (event.data === YT.PlayerState.PLAYING) {
@@ -292,6 +296,10 @@ document.getElementById('muteChatToggle').addEventListener('change', function() 
         chat_sounds = true;
     }
 });
+
+document.getElementById('player').addEventListener('click', function() {
+    player.playVideo()
+}
 
 // Play chat sound
 function playSound() {
