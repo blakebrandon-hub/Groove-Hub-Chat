@@ -299,7 +299,7 @@ document.getElementById('muteChatToggle').addEventListener('change', function() 
 
 document.getElementById('player').addEventListener('click', function() {
     player.playVideo()
-}
+});
 
 // Play chat sound
 function playSound() {
