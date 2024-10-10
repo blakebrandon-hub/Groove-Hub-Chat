@@ -8,30 +8,39 @@ let seconds = 0;
 let check_url = "";
 let url_pass = true;
 let chat_sounds = false;
+let chat_messages = [];
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const username = urlParams.get('username')
 
 
 socket.on('sync_video', (data) => {
-            video_queue = data.video_queue;
-            currentTime = data.time;
-            sessionId = data.session_id;
+    video_queue = data.video_queue;
+    currentTime = data.time;
+    chat_messages = data.chat_messages;
 
-            let element = document.getElementById('queueList');
-            element.innerHTML = ""; // Clear the existing list
+    let queueList = document.getElementById('queueList');
+    queueList.innerHTML = ""; // Clear the existing list
 
-            // Loop through each video in the queue
-            let videoKeys = Object.keys(video_queue);
-    
-            videoKeys.forEach(key => {
-            let video = video_queue[key]; // Get video object by key
-            let li = document.createElement("li");
-            li.innerText = video.title; // Assuming video has a 'title' property
-            element.appendChild(li); // Add the video title to the list
+    let messages = document.getElementById('messages');
+    messages.innerHTML = ""; // Clear the existing messages
+
+    let videoKeys = Object.keys(video_queue);
+
+    videoKeys.forEach(key => {
+        let video = video_queue[key]; // Get video object by key
+        let li = document.createElement("li");
+        li.innerText = video.title; // Assuming video has a 'title' property
+        queueList.appendChild(li); // Add the video title to the list
     });
-    
+
+    chat_messages.forEach(message => {
+        let li = document.createElement("li");
+        li.innerText = message; // Directly reference the message
+        messages.appendChild(li); // Add the message to the messages list
+    });
 });
+
 
 window.onload = function() {
    
