@@ -6,11 +6,10 @@ import os
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 socketio = SocketIO(app, async_mode='gevent')
-app.secret_key = os.urandom(24) 
 
-# Initialize an empty queue
 video_queue = {}
 current_time = 0
+chat_messages = []
 
 @app.route('/')
 def landing_page():
@@ -22,24 +21,24 @@ def index():
 
 @socketio.on('message')
 def handle_message(msg):
+    if len(chat_messages) >= 50:
+        chat_messages.pop(0)  # Remove the oldest message (index 0)
+
+    chat_messages.append(msg)  # Append the new message
+
     send(msg, broadcast=True)
 
 @socketio.on('connect')
 def handle_connect():
     global current_video, current_time
 
-    # Generate a unique session ID for each user when they connect
-    session_id = os.urandom(16).hex()  # Random 16-byte string as session ID
-    session['session_id'] = session_id  # Store in Flask session
-
     # When a new user joins, send them the current video and time
-    emit('sync_video', {'video_queue': video_queue, 'time': round(current_time), 'session_id': session_id});
+    emit('sync_video', {'video_queue': video_queue, 'time': round(current_time), 'chat_messages': chat_messages});
 
 @socketio.on('update_time')
 def handle_update_time(data):
     global current_time
     current_time = round(data)
-
 
 @socketio.on('add_video')
 def handle_add_video(data):
@@ -51,7 +50,6 @@ def handle_add_video(data):
     }
     
     emit('update_queue', video_queue, broadcast=True)
-
 
 @socketio.on('song_ended')
 def handle_song_ended():
