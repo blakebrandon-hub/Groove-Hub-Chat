@@ -51,19 +51,6 @@ def handle_add_video(data):
     
     emit('update_queue', video_queue, broadcast=True)
 
-@socketio.on('song_ended')
-def handle_song_ended():
-    global video_queue
-    del video_queue[0]
-    new_video_queue = {}
-    index = 0
-    if len(video_queue) >= 1:
-        for key, value in video_queue.items():
-            new_video_queue[index] = value
-            index += 1
-    video_queue = new_video_queue
-    emit('update_queue', video_queue, broadcast=True)
-
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
