@@ -28,7 +28,7 @@ window.onload = function() {
                 videoId: '',
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 1,    // Hide player controls
+                    'controls': 0,    // Hide player controls
                     'disablekb': 1,   // Disable keyboard controls
                     'modestbranding': 1, // Minimize YouTube branding
                     'rel': 0,         // Disable related videos at the end
@@ -54,7 +54,7 @@ async function loadAndCheckVideo(videoId) {
             videoId: '', // Load later when ready
             playerVars: {
                 'autoplay': 1,
-                'controls': 1,    // Hide player controls
+                'controls': 0,    // Hide player controls
                 'disablekb': 1,   // Disable keyboard controls
                 'modestbranding': 1, // Minimize YouTube branding
                 'rel': 0,         // Disable related videos at the end
@@ -118,31 +118,29 @@ function onPlayerStateChange(event) {
     }
 
 if (event.data === YT.PlayerState.ENDED) {
-    // Remove the current video from the queue
+    // Delete the current video from the queue
     delete video_queue[currentVideoIndex];
+
     currentVideoIndex += 1;
 
-    // Reset currentVideoIndex if it goes out of bounds
-    if (currentVideoIndex >= Object.keys(video_queue).length) {
-        currentVideoIndex = 0;
-    }
+    // Get the remaining keys in the queue
+    const remainingKeys = Object.keys(video_queue);
 
-    // Check if there are still videos in the queue
-    if (Object.keys(video_queue).length > 0) {
-        // Load and play the next video in the queue
+    // If there are still videos left in the queue
+    if (remainingKeys.length > 0) {
         player.loadVideoById(video_queue[currentVideoIndex].video_id);
         player.playVideo();
     } else {
         console.log('No more songs left in the queue');
-        currentVideoIndex = 0;  // Reset to 0 if no songs are left
+        currentVideoIndex = 0;  // Reset the index if no videos are left
     }
 
     // Update the queue and notify the server
     updateVideoQueue(video_queue);
     socket.emit('song_ended', currentVideoIndex);
-}
-}
+    }
 
+}
 
 // Time Functions
 function updateCurrentTime() {
