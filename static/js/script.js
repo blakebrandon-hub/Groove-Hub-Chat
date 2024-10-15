@@ -9,38 +9,12 @@ let url_pass = true;
 let chat_sounds = false;
 let chat_messages = [];
 let currentVideoIndex = 0;
+let seek = true;
 const API_KEY = 'AIzaSyC80EUqt8ErvmmJ-Q-5Srq2L72Ur0D3Mmg';
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const username = urlParams.get('username')
 
-
-socket.on('sync_video', (data) => {
-    video_queue = data.video_queue;
-    currentTime = data.time;
-    chat_messages = data.chat_messages;
-
-    let queueList = document.getElementById('queueList');
-    queueList.innerHTML = ""; // Clear the existing list
-
-    let messages = document.getElementById('messages');
-    messages.innerHTML = ""; // Clear the existing messages
-
-    let videoKeys = Object.keys(video_queue);
-
-    videoKeys.forEach(key => {
-        let video = video_queue[key]; // Get video object by key
-        let li = document.createElement("li");
-        li.innerText = video.title; // Assuming video has a 'title' property
-        queueList.appendChild(li); // Add the video title to the list
-    });
-
-    chat_messages.forEach(message => {
-        let li = document.createElement("li");
-        li.innerText = message; // Directly reference the message
-        messages.appendChild(li); // Add the message to the messages list
-    });
-});
 
 window.onload = function() {
     socket.send(`${username} joined the room`);
@@ -54,7 +28,7 @@ window.onload = function() {
                 videoId: '',
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 0,    // Hide player controls
+                    'controls': 1,    // Hide player controls
                     'disablekb': 1,   // Disable keyboard controls
                     'modestbranding': 1, // Minimize YouTube branding
                     'rel': 0,         // Disable related videos at the end
@@ -112,9 +86,15 @@ async function loadAndCheckVideo(videoId) {
     });
 }
 
+    
 function onPlayerReady(event) {
-    player.loadVideoById(video_queue[0].video_id, currentTime);
-    player.playVideo();
+    playFirstVideo();
+}
+
+
+function playFirstVideo() {
+    console.log(`currentTime at playFirstVideo: ${currentTime}`)
+    player.loadVideoById(video_queue[0].video_id, currentTime)
 }
 
 function onPlayerStateChange(event) {
@@ -123,20 +103,35 @@ function onPlayerStateChange(event) {
     }
 
     if (event.data === YT.PlayerState.PLAYING) {
+
+        
+        if (seek === true) {
+            player.seekTo(currentTime);
+            player.playVideo();
+        }
+        seek = false;
+        
+
         updateDuration();
         setInterval(updateCurrentTime, 1000);  // Update server every second
         updateNowPlaying();
     }
 
     if (event.data === YT.PlayerState.ENDED) {
-        currentVideoIndex += 1;
+        delete video_queue[currentVideoIndex];
+        currentVideoIndex += 1
 
-        if (currentVideoIndex < Object.keys(video_queue).length) {
+        let videoKeys = Object.keys(video_queue);
+
+        if (videoKeys.length >= 1) {
             player.loadVideoById(video_queue[currentVideoIndex].video_id);
             player.playVideo();
         } else {
-            console.log("End of the queue");
+            console.log('No more songs left in the queue')
+            currentVideoIndex = 0;
         }
+
+        updateVideoQueue(video_queue);
     }
 }
 
@@ -285,27 +280,36 @@ document.getElementById('muteChatToggle').addEventListener('change', function() 
     }
 });
 
-// Play chat sound
-function playSound() {
-    if (chat_sounds === true) {
-        var audio = document.getElementById('chat-sound');
-        audio.play();
-    }
+function updateChatMessages(msgs) {
+    let messages = document.getElementById('messages');
+    messages.innerHTML = ""; // Clear the existing messages
+    msgs.forEach(message => {
+        let li = document.createElement("li");
+        li.innerText = message; // Directly reference the message
+        messages.appendChild(li); // Add the message to the messages list
+    });
 }
 
-// Press enter to send message
-document.getElementById('myMessage').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        sendMessage(); // Calls the sendMessage function
-    }
-});
+function updateVideoQueue(queue) {
+    let queueList = document.getElementById('queueList');
+    queueList.innerHTML = ""; // Clear the existing list
 
-// Detect when the user exits and re-enters the app (visibility change)
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-        player.seekTo(currentTime);
-    }    
-});
+    let videoKeys = Object.keys(video_queue);
+
+    videoKeys.forEach(key => {
+        let video = video_queue[key]; // Get video object by key
+        let li = document.createElement("li");
+        li.innerText = video.title; // Assuming video has a 'title' property
+        queueList.appendChild(li); // Add the video title to the list
+    });
+}
+
+function updateNowPlaying() {
+    var videoData = player.getVideoData(); 
+    var videoTitle = videoData.title;
+    var element = document.getElementById("title");
+    element.innerText = videoTitle; // Fixed variable name
+}
 
 function sendMessage() {
     var input = document.getElementById('myMessage');
@@ -325,31 +329,36 @@ function sendMessage() {
         if (!message.includes("likes")) {
             playSound();  // Play sound only when sending a regular chat message
         }
-    }  // Close the outer if block
-}  // Close the sendMessage function
+    }  
+}  
 
 function upvote() {
     var videoData = player.getVideoData();
     var videoTitle = videoData.title;
-
-    // No sound should be played during upvote, so just send the message
     socket.send(`${username} likes "${videoTitle}"`);
 }
 
 function downvote() {
     var videoData = player.getVideoData();
     var videoTitle = videoData.title;
-
-    // No sound should be played during downvote, so just send the message
     socket.send(`${username} dislikes "${videoTitle}"`);
 }
 
-function updateNowPlaying() {
-    var videoData = player.getVideoData(); 
-    var videoTitle = videoData.title;
-    var element = document.getElementById("title");
-    element.innerText = videoTitle; // Fixed variable name
+// Play chat sound
+function playSound() {
+    if (chat_sounds === true) {
+        var audio = document.getElementById('chat-sound');
+        audio.play();
+    }
 }
+
+socket.on('sync_video', (data) => {
+    video_queue = data.video_queue;
+    chat_messages = data.chat_messages;
+    currentTime = data.currentTime;
+    updateChatMessages(chat_messages);
+    updateVideoQueue(video_queue);
+});
 
 socket.on('message', function(msg) {
     var messagesDiv = document.getElementById('messages');
@@ -360,32 +369,41 @@ socket.on('message', function(msg) {
     playSound();
 });
 
-socket.on('update_queue', function(queue) {
+socket.on('video_added', function(queue) {
     video_queue = queue;
-    let element = document.getElementById('queueList');
-    element.innerHTML = ""; // Clear the existing list
+    updateVideoQueue(queue);
 
-    // Log the queue for debugging
-    console.log(video_queue);
-
-    // Loop through each video in the queue
-    let videoKeys = Object.keys(video_queue);
-    
-    videoKeys.forEach(key => {
-        let video = video_queue[key]; // Get video object by key
-        let li = document.createElement("li");
-        li.innerText = video.title; // Assuming video has a 'title' property
-        element.appendChild(li); // Add the video title to the list
-        element.scrollTop = element.scrollHeight;
-    });
-
-
-    // Check if the player is currently playing
-    if (player.getPlayerState() !== YT.PlayerState.PLAYING) {
-        // Check if it's the first video in the queue and load it
-        if (videoKeys.length >= 1) {
-            player.loadVideoById(video_queue[0].video_id);
-            updateNowPlaying(); // Update the "Now Playing" title
-        }
+    // Play if first video
+    if (player.getPlayerState() != YT.PlayerState.PLAYING) {
+        player.loadVideoById(video_queue[0].video_id, currentTime);
+        player.playVideo();
     }
+
+});
+
+socket.on('sync_video', (data) => {
+    video_queue = data.video_queue;
+    chat_messages = data.chat_messages;
+    currentTime = data.time;
+    console.log(`Current Time at sync_video ${currentTime}`);
+    updateChatMessages(chat_messages);
+    updateVideoQueue(video_queue);
+
+
+});
+
+
+// Press enter to send message
+document.getElementById('myMessage').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        sendMessage(); // Calls the sendMessage function
+    }
+});
+
+// Detect when the user exits and re-enters the app (visibility change)
+document.addEventListener('visibilitychange', function() {
+    if (player && document.visibilityState === 'visible') {
+        player.seekTo(currentTime);
+
+    }    
 });
