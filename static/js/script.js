@@ -28,7 +28,7 @@ window.onload = function() {
                 videoId: '',
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 0,    // Hide player controls
+                    'controls': 1,    // Hide player controls
                     'disablekb': 1,   // Disable keyboard controls
                     'modestbranding': 1, // Minimize YouTube branding
                     'rel': 0,         // Disable related videos at the end
@@ -117,23 +117,32 @@ function onPlayerStateChange(event) {
         updateNowPlaying();
     }
 
-    if (event.data === YT.PlayerState.ENDED) {
-        delete video_queue[currentVideoIndex];
-        currentVideoIndex += 1
+if (event.data === YT.PlayerState.ENDED) {
+    // Remove the current video from the queue
+    delete video_queue[currentVideoIndex];
+    currentVideoIndex += 1;
 
-        let videoKeys = Object.keys(video_queue);
-
-        if (videoKeys.length >= 1) {
-            player.loadVideoById(video_queue[currentVideoIndex].video_id);
-            player.playVideo();
-        } else {
-            console.log('No more songs left in the queue')
-            currentVideoIndex = 0;
-        }
-
-        updateVideoQueue(video_queue);
+    // Reset currentVideoIndex if it goes out of bounds
+    if (currentVideoIndex >= Object.keys(video_queue).length) {
+        currentVideoIndex = 0;
     }
+
+    // Check if there are still videos in the queue
+    if (Object.keys(video_queue).length > 0) {
+        // Load and play the next video in the queue
+        player.loadVideoById(video_queue[currentVideoIndex].video_id);
+        player.playVideo();
+    } else {
+        console.log('No more songs left in the queue');
+        currentVideoIndex = 0;  // Reset to 0 if no songs are left
+    }
+
+    // Update the queue and notify the server
+    updateVideoQueue(video_queue);
+    socket.emit('song_ended', currentVideoIndex);
 }
+}
+
 
 // Time Functions
 function updateCurrentTime() {
@@ -385,11 +394,10 @@ socket.on('sync_video', (data) => {
     video_queue = data.video_queue;
     chat_messages = data.chat_messages;
     currentTime = data.time;
+    currentVideoIndex = data.current_video_index;
     console.log(`Current Time at sync_video ${currentTime}`);
     updateChatMessages(chat_messages);
     updateVideoQueue(video_queue);
-
-
 });
 
 
