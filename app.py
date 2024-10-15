@@ -49,7 +49,7 @@ def handle_add_video(data):
         "video_id": data['video_id']
     }
     
-    emit('update_queue', video_queue, broadcast=True)
+    emit('video_added', video_queue, broadcast=True)
 
 
 if __name__ == '__main__':
