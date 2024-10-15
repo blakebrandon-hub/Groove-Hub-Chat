@@ -28,7 +28,7 @@ window.onload = function() {
                 videoId: '',
                 playerVars: {
                     'autoplay': 1,
-                    'controls': 1,    // Hide player controls
+                    'controls': 0,    // Hide player controls
                     'disablekb': 1,   // Disable keyboard controls
                     'modestbranding': 1, // Minimize YouTube branding
                     'rel': 0,         // Disable related videos at the end
