@@ -10,6 +10,7 @@ socketio = SocketIO(app, async_mode='gevent')
 video_queue = {}
 current_time = 0
 chat_messages = []
+current_video_index = 0
 
 @app.route('/')
 def landing_page():
@@ -30,10 +31,14 @@ def handle_message(msg):
 
 @socketio.on('connect')
 def handle_connect():
-    global current_video, current_time
+    global current_video, current_time, currentVideoIndex
 
     # When a new user joins, send them the current video and time
-    emit('sync_video', {'video_queue': video_queue, 'time': round(current_time), 'chat_messages': chat_messages});
+    emit('sync_video', 
+        {'video_queue': video_queue, 
+        'time': round(current_time), 
+        'chat_messages': chat_messages,
+        "current_video_index": current_video_index});
 
 @socketio.on('update_time')
 def handle_update_time(data):
@@ -51,6 +56,12 @@ def handle_add_video(data):
     
     emit('video_added', video_queue, broadcast=True)
 
+@socketio.on('song_ended')
+def handle_song_ended(index):
+    global video_queue, current_video_index
+    current_video_index = index
+
 
 if __name__ == '__main__':
+    print("127.0.0.1:5000")
     socketio.run(app, debug=True)
