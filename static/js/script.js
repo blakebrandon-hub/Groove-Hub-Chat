@@ -137,8 +137,9 @@ if (event.data === YT.PlayerState.ENDED) {
 
     // Update the queue and notify the server
     updateVideoQueue(video_queue);
-    socket.emit('song_ended', currentVideoIndex);
+    socket.emit('video_ended');
     }
+
 
 }
 
@@ -213,7 +214,6 @@ async function addVideo() {
                 // Notify the chat about the new addition
                 socket.send(`${username} added ${title}`);
 
-                socket.emit('update_queue');
             });
 
             url_pass = true;
@@ -382,7 +382,7 @@ socket.on('video_added', function(queue) {
 
     // Play if first video
     if (player.getPlayerState() != YT.PlayerState.PLAYING) {
-        player.loadVideoById(video_queue[0].video_id, currentTime);
+        player.loadVideoById(video_queue[0].video_id);
         player.playVideo();
     }
 
@@ -392,7 +392,6 @@ socket.on('sync_video', (data) => {
     video_queue = data.video_queue;
     chat_messages = data.chat_messages;
     currentTime = data.time;
-    currentVideoIndex = data.current_video_index;
     console.log(`Current Time at sync_video ${currentTime}`);
     updateChatMessages(chat_messages);
     updateVideoQueue(video_queue);
