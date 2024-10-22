@@ -21,7 +21,7 @@ def index():
 @socketio.on('message')
 def handle_message(msg):
     if len(chat_messages) >= 50:
-        chat_messages.pop(0
+        chat_messages.pop(0)
 
     chat_messages.append(msg)
     send(msg, broadcast=True)
