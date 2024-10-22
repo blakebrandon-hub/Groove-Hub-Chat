@@ -20,7 +20,6 @@ window.onload = function() {
     socket.send(`${username} joined the room`);
 }
 
-// Create an <iframe> (and YouTube player) after the API code downloads
  function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '315',
@@ -42,6 +41,7 @@ window.onload = function() {
             });
         }
 
+// Hidden iframe for detecting blocked videos before they can be added
 async function loadAndCheckVideo(videoId) {
     return new Promise((resolve, reject) => {
         if (detector) {
@@ -91,7 +91,6 @@ function onPlayerReady(event) {
     playFirstVideo();
 }
 
-
 function playFirstVideo() {
     console.log(`currentTime at playFirstVideo: ${currentTime}`)
     player.loadVideoById(video_queue[0].video_id, currentTime)
@@ -104,14 +103,12 @@ function onPlayerStateChange(event) {
 
     if (event.data === YT.PlayerState.PLAYING) {
 
-        
         if (seek === true) {
             player.seekTo(currentTime);
             player.playVideo();
         }
         seek = false;
         
-
         updateDuration();
         setInterval(updateCurrentTime, 1000);  // Update server every second
         updateNowPlaying();
@@ -140,10 +137,8 @@ if (event.data === YT.PlayerState.ENDED) {
     socket.emit('video_ended');
     }
 
-
 }
 
-// Time Functions
 function updateCurrentTime() {
   currentTime = player.getCurrentTime();
   document.getElementById('currentTime').textContent = formatTime(currentTime);
@@ -396,7 +391,6 @@ socket.on('sync_video', (data) => {
     updateChatMessages(chat_messages);
     updateVideoQueue(video_queue);
 });
-
 
 // Press enter to send message
 document.getElementById('myMessage').addEventListener('keydown', function(event) {
