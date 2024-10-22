@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify, request, session
 from flask_socketio import SocketIO, emit, send
-import uuid
-import os
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -22,16 +21,16 @@ def index():
 @socketio.on('message')
 def handle_message(msg):
     if len(chat_messages) >= 50:
-        chat_messages.pop(0)  # Remove the oldest message (index 0)
+        chat_messages.pop(0
 
-    chat_messages.append(msg)  # Append the new message
+    chat_messages.append(msg)
     send(msg, broadcast=True)
 
 @socketio.on('connect')
 def handle_connect():
     global current_video, current_time
 
-    # When a new user joins, send them the current video and time
+    # When a user joins send them the current video, time, and chat messages
     emit('sync_video', {
         'time': round(current_time), 
         'chat_messages': chat_messages,
@@ -42,7 +41,7 @@ def handle_update_time(data):
     global current_time
     current_time = round(data)
 
-# Add video to queue. Emit video queue. 
+# Add video to queue. Emit video queue
 @socketio.on('add_video')
 def handle_add_video(data):
 
@@ -54,7 +53,7 @@ def handle_add_video(data):
     
     emit('video_added', video_queue, broadcast=True)
 
-# Delete first video and reindex queue. Emit on connect
+# Delete first video and reindex queue
 @socketio.on('video_ended')
 def handle_video_ended():
     global video_queue
@@ -69,5 +68,4 @@ def handle_video_ended():
 
 
 if __name__ == '__main__':
-    print("127.0.0.1:5000")
     socketio.run(app, debug=True)
