@@ -76,7 +76,7 @@ def handle_request_sync():
     emit('sync', {
         'time': round(current_time),
         'current_video': current_video
-        })   
+        }, broadcast=False)   
 
 
 if __name__ == '__main__':
