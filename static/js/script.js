@@ -485,5 +485,4 @@ if (event.data === YT.PlayerState.ENDED) {
     }
 
 }
-
-
+}
