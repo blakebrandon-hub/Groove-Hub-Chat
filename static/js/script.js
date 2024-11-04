@@ -415,6 +415,7 @@ document.addEventListener('visibilitychange', function() {
 
 // Manual Sync Button
 function manualSync() {
+     player.pauseVideo();
     // Emit a sync request to the server
     socket.emit('request_sync');
 }
