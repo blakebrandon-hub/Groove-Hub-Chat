@@ -9,6 +9,7 @@ socketio = SocketIO(app, async_mode='gevent')
 video_queue = {}
 current_time = 0
 chat_messages = []
+current_video = video_queue[0].video_id
 
 @app.route('/')
 def landing_page():
@@ -65,6 +66,13 @@ def handle_video_ended():
             new_video_queue[index] = value
             index += 1
     video_queue = new_video_queue
+
+@socketio.on('request_sync')
+def handle_request_sync():
+    emit('manual_sync', {
+        'time': round(current_time),
+        'current_video': current_video
+        })   
 
 
 if __name__ == '__main__':
