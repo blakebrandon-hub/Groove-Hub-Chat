@@ -413,8 +413,9 @@ document.addEventListener('visibilitychange', function() {
     }    
 });
 
-setTimeout(() => {
-    function manualSync() {
+// Define manualSync as a global function
+function manualSync() {
+    setTimeout(() => {
         // Check if player exists and destroy it to reset
         if (player && typeof player.destroy === 'function') {
             player.destroy();
@@ -467,27 +468,20 @@ setTimeout(() => {
             }
 
             if (event.data === YT.PlayerState.ENDED) {
-                // Delete the current video from the queue
                 delete video_queue[currentVideoIndex];
-
                 currentVideoIndex += 1;
-
-                // Get the remaining keys in the queue
                 const remainingKeys = Object.keys(video_queue);
 
-                // If there are still videos left in the queue
                 if (remainingKeys.length > 0) {
                     player.loadVideoById(video_queue[currentVideoIndex].video_id);
                     player.playVideo();
                 } else {
                     console.log('No more songs left in the queue');
-                    currentVideoIndex = 0;  // Reset the index if no videos are left
+                    currentVideoIndex = 0;
                 }
             }
         }
-    }
+    }, 5000); // Delay of 5 seconds
+}
 
-    // Call manualSync after 5 seconds
-    manualSync();
-}, 5000); // 5000 milliseconds = 5 seconds
 
