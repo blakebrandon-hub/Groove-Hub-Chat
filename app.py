@@ -73,7 +73,7 @@ def handle_video_ended():
 
 @socketio.on('request_sync')
 def handle_request_sync():
-    emit('manual_sync', {
+    emit('sync', {
         'time': round(current_time),
         'current_video': current_video
         })   
