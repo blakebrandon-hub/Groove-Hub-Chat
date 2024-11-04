@@ -420,7 +420,7 @@ function manualSync() {
     }
 
     // Recreate the player with the same video ID
-    player = new YT.Player('player', {
+    player2 = new YT.Player('player2', {
         height: '315',
         width: '560',
         videoId: currentVideoId,  // Use the current video ID here
@@ -434,21 +434,21 @@ function manualSync() {
             'enablejsapi': 1
         },
         events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            'onReady': onPlayerReady2,
+            'onStateChange': onPlayerStateChange2
         }
     });
 
-    function onPlayerReady(event) {
-    playFirstVideo();
+    function onPlayerReady2(event) {
+    playFirstVideo2();
 }
 
-function playFirstVideo() {
+function playFirstVideo2() {
     console.log(`currentTime at playFirstVideo: ${currentTime}`)
     player.loadVideoById(video_queue[0].video_id, currentTime)
 }
 
-function onPlayerStateChange(event) {
+function onPlayerStateChange2(event) {
     if (event.data === YT.PlayerState.PAUSED) {
         player.playVideo()
     }
