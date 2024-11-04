@@ -394,7 +394,7 @@ socket.on('sync_video', (data) => {
 
 socket.on('sync'), (data) => {
     current_video = data.current_video;
-    currentTime = data.current_time;
+    currentTime = data.currentTime;
     player.loadVideoById(current_video, currentTime);
     player.playVideo();
 }
