@@ -418,6 +418,7 @@ function manualSync() {
     if (player && typeof player.destroy === 'function') {
         player.destroy();
     }
+}
 
     // Recreate the player with the same video ID
     player2 = new YT.Player('player2', {
