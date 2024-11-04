@@ -10,7 +10,7 @@ video_queue = {}
 current_time = 0
 chat_messages = []
 
-if len(video_queue >= 1):
+if len(video_queue) >= 1:
     current_video = video_queue[0].video_id
 else:
     current_video = ""
