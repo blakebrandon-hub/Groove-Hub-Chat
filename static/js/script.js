@@ -414,85 +414,80 @@ document.addEventListener('visibilitychange', function() {
 });
 
 setTimeout(() => {
-
-
-
-function manualSync() {
-    // Check if player exists and destroy it to reset
-    if (player && typeof player.destroy === 'function') {
-        player.destroy();
-    }
-
-    
- // Recreate the player with the same video ID
-    player2 = new YT.Player('player2', {
-        height: '315',
-        width: '560',
-        videoId: '',  // Use the current video ID here
-        playerVars: {
-            'autoplay': 1,
-            'controls': 0,
-            'disablekb': 1,
-            'modestbranding': 1,
-            'rel': 0,
-            'mute': 1,
-            'enablejsapi': 1
-        },
-        events: {
-            'onReady': onPlayerReady2,
-            'onStateChange': onPlayerStateChange2
+    function manualSync() {
+        // Check if player exists and destroy it to reset
+        if (player && typeof player.destroy === 'function') {
+            player.destroy();
         }
-    });
 
-    function onPlayerReady2(event) {
-    playFirstVideo2();
-}
+        // Recreate the player with the same video ID
+        player = new YT.Player('player', {
+            height: '315',
+            width: '560',
+            videoId: '',  // Use the current video ID here
+            playerVars: {
+                'autoplay': 1,
+                'controls': 0,
+                'disablekb': 1,
+                'modestbranding': 1,
+                'rel': 0,
+                'mute': 1,
+                'enablejsapi': 1
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
 
-function playFirstVideo2() {
-    console.log(`currentTime at playFirstVideo: ${currentTime}`)
-    player.loadVideoById(video_queue[0].video_id, currentTime)
-}
-
-function onPlayerStateChange2(event) {
-    if (event.data === YT.PlayerState.PAUSED) {
-        player.playVideo()
-    }
-
-    if (event.data === YT.PlayerState.PLAYING) {
-
-        if (seek === true) {
-            player.seekTo(currentTime);
-            player.playVideo();
+        function onPlayerReady(event) {
+            playFirstVideo();
         }
-        seek = false;
-        
-        updateDuration();
-        setInterval(updateCurrentTime, 1000);  // Update server every second
-        updateNowPlaying();
+
+        function playFirstVideo() {
+            console.log(`currentTime at playFirstVideo: ${currentTime}`);
+            player.loadVideoById(video_queue[0].video_id, currentTime);
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PAUSED) {
+                player.playVideo();
+            }
+
+            if (event.data === YT.PlayerState.PLAYING) {
+                if (seek === true) {
+                    player.seekTo(currentTime);
+                    player.playVideo();
+                }
+                seek = false;
+
+                updateDuration();
+                setInterval(updateCurrentTime, 1000);  // Update server every second
+                updateNowPlaying();
+            }
+
+            if (event.data === YT.PlayerState.ENDED) {
+                // Delete the current video from the queue
+                delete video_queue[currentVideoIndex];
+
+                currentVideoIndex += 1;
+
+                // Get the remaining keys in the queue
+                const remainingKeys = Object.keys(video_queue);
+
+                // If there are still videos left in the queue
+                if (remainingKeys.length > 0) {
+                    player.loadVideoById(video_queue[currentVideoIndex].video_id);
+                    player.playVideo();
+                } else {
+                    console.log('No more songs left in the queue');
+                    currentVideoIndex = 0;  // Reset the index if no videos are left
+                }
+            }
+        }
     }
 
-if (event.data === YT.PlayerState.ENDED) {
-    // Delete the current video from the queue
-    delete video_queue[currentVideoIndex];
+    // Call manualSync after 5 seconds
+    manualSync();
+}, 5000); // 5000 milliseconds = 5 seconds
 
-    currentVideoIndex += 1;
-
-    // Get the remaining keys in the queue
-    const remainingKeys = Object.keys(video_queue);
-
-    // If there are still videos left in the queue
-    if (remainingKeys.length > 0) {
-        player.loadVideoById(video_queue[currentVideoIndex].video_id);
-        player.playVideo();
-    } else {
-        console.log('No more songs left in the queue');
-        currentVideoIndex = 0;  // Reset the index if no videos are left
-    }
-
-}
-}
-
-    
-}
-
-   }, 5000);
