@@ -424,7 +424,7 @@ function manualSync() {
     player2 = new YT.Player('player2', {
         height: '315',
         width: '560',
-        videoId: currentVideoId,  // Use the current video ID here
+        videoId: '',  // Use the current video ID here
         playerVars: {
             'autoplay': 1,
             'controls': 0,
