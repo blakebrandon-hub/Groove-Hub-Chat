@@ -439,7 +439,51 @@ function manualSync() {
         }
     });
 
-    // Emit the sync request after reinitializing
-    socket.emit('request_sync');
+    function onPlayerReady(event) {
+    playFirstVideo();
 }
+
+function playFirstVideo() {
+    console.log(`currentTime at playFirstVideo: ${currentTime}`)
+    player.loadVideoById(video_queue[0].video_id, currentTime)
+}
+
+function onPlayerStateChange(event) {
+    if (event.data === YT.PlayerState.PAUSED) {
+        player.playVideo()
+    }
+
+    if (event.data === YT.PlayerState.PLAYING) {
+
+        if (seek === true) {
+            player.seekTo(currentTime);
+            player.playVideo();
+        }
+        seek = false;
+        
+        updateDuration();
+        setInterval(updateCurrentTime, 1000);  // Update server every second
+        updateNowPlaying();
+    }
+
+if (event.data === YT.PlayerState.ENDED) {
+    // Delete the current video from the queue
+    delete video_queue[currentVideoIndex];
+
+    currentVideoIndex += 1;
+
+    // Get the remaining keys in the queue
+    const remainingKeys = Object.keys(video_queue);
+
+    // If there are still videos left in the queue
+    if (remainingKeys.length > 0) {
+        player.loadVideoById(video_queue[currentVideoIndex].video_id);
+        player.playVideo();
+    } else {
+        console.log('No more songs left in the queue');
+        currentVideoIndex = 0;  // Reset the index if no videos are left
+    }
+
+}
+
 
