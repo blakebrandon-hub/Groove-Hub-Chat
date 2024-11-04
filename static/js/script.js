@@ -413,14 +413,18 @@ document.addEventListener('visibilitychange', function() {
     }    
 });
 
+setTimeout(() => {
+
+
+
 function manualSync() {
     // Check if player exists and destroy it to reset
     if (player && typeof player.destroy === 'function') {
         player.destroy();
     }
-}
 
-    // Recreate the player with the same video ID
+    
+ // Recreate the player with the same video ID
     player2 = new YT.Player('player2', {
         height: '315',
         width: '560',
@@ -487,3 +491,8 @@ if (event.data === YT.PlayerState.ENDED) {
 
 }
 }
+
+    
+}
+
+   }, 5000);
