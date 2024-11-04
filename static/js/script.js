@@ -392,7 +392,7 @@ socket.on('sync_video', (data) => {
     updateVideoQueue(video_queue);
 });
 
-socket.on('manual_sync'), (data) => {
+socket.on('sync'), (data) => {
     current_video = data.current_video;
     currentTime = data.current_time;
     player.loadVideoById(current_video, currentTime);
