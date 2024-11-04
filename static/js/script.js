@@ -354,12 +354,11 @@ function playSound() {
     }
 }
 
-socket.on('sync_video', (data) => {
-    video_queue = data.video_queue;
-    chat_messages = data.chat_messages;
+socket.on('sync', (data) => {
+    current_video = data.current_video;
     currentTime = data.currentTime;
-    updateChatMessages(chat_messages);
-    updateVideoQueue(video_queue);
+    player.loadVideoById(current_video, currentTime);
+    player.playVideo();
 });
 
 socket.on('message', function(msg) {
@@ -392,12 +391,12 @@ socket.on('sync_video', (data) => {
     updateVideoQueue(video_queue);
 });
 
-socket.on('sync'), (data) => {
+socket.on('sync', (data) => {
     current_video = data.current_video;
     currentTime = data.currentTime;
     player.loadVideoById(current_video, currentTime);
     player.playVideo();
-}
+});
 
 // Press enter to send message
 document.getElementById('myMessage').addEventListener('keydown', function(event) {
