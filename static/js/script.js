@@ -392,11 +392,10 @@ socket.on('sync_video', (data) => {
 });
 
 socket.on('sync', (data) => {
-    current_video = data.current_video;
-    currentTime = data.currentTime;
-    player.loadVideoById(current_video);
+    currentVideo = data.current_video;
+    current_time = data.currentTime;
+    player.loadVideoById(current_video, currentTime);
     player.playVideo();
-    player.seekTo(currentTime);
 });
 
 // Press enter to send message
