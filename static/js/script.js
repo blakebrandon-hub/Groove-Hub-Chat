@@ -413,9 +413,33 @@ document.addEventListener('visibilitychange', function() {
     }    
 });
 
-// Manual Sync Button
 function manualSync() {
-     player.pauseVideo();
-    // Emit a sync request to the server
+    // Check if player exists and destroy it to reset
+    if (player && typeof player.destroy === 'function') {
+        player.destroy();
+    }
+
+    // Recreate the player with the same video ID
+    player = new YT.Player('player', {
+        height: '315',
+        width: '560',
+        videoId: currentVideoId,  // Use the current video ID here
+        playerVars: {
+            'autoplay': 1,
+            'controls': 0,
+            'disablekb': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'mute': 1,
+            'enablejsapi': 1
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+        }
+    });
+
+    // Emit the sync request after reinitializing
     socket.emit('request_sync');
 }
+
