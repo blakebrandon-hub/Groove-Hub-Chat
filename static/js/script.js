@@ -392,6 +392,13 @@ socket.on('sync_video', (data) => {
     updateVideoQueue(video_queue);
 });
 
+socket.on('manual_sync'), (data) => {
+    current_video = data.current_video;
+    currentTime = data.current_time;
+    player.loadVideoById(current_video, currentTime);
+    player.playVideo();
+}
+
 // Press enter to send message
 document.getElementById('myMessage').addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
@@ -406,3 +413,9 @@ document.addEventListener('visibilitychange', function() {
 
     }    
 });
+
+// Manual Sync Button
+function syncVideo() {
+    // Emit a sync request to the server
+    socket.emit('request_sync');
+}
