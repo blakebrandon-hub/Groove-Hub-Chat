@@ -94,8 +94,6 @@ To contribute code:
 ## Future Plans
 
 - **Login System**: Adding user authentication with Flask-Login.
-- **Chat History**: Persist chat messages for better user experience.
-- **Enhanced Mobile Support**: Further improvements to the UI for mobile users.
 - **Moderator Tools**: Additional features to manage queues and user activity.
 
 ## License
