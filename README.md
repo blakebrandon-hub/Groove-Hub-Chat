@@ -106,7 +106,7 @@ This project is licensed under the MIT License. See the LICENSE file for more de
 
 Created by Blake Brandon. For questions or feedback, feel free to reach out:
 - GitHub: [https://github.com/blakebrandon-hub](https://github.com/blakebrandon-hub)
-- Email: [your-email@example.com](mailto:your-email@example.com)
+- Email: [blakebrandon.dev@gmail.com](mailto:blakebrandon.dev@gmail.com)
 
 ---
 
