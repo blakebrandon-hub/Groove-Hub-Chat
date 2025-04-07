@@ -85,6 +85,10 @@ Groove Hub is deployed on Heroku. To deploy your own instance:
 - **Login System**: Adding user authentication with Flask-Login.
 - **Moderator Tools**: Additional features to manage queues and user activity.
 
+## 📜 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
 ## Contact
 
 Created by Blake Brandon. For questions or feedback, feel free to reach out:
