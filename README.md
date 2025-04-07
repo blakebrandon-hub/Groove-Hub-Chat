@@ -1,6 +1,6 @@
 # Groove Hub
 
-Groove Hub is an interactive real-time music-sharing platform where users can create collaborative playlists, chat with friends, and enjoy synchronized YouTube video playback together. Groove Hub is designed to bring people together through the power of music.
+Groove Hub is a chatroom where you can share music from YouTube, build collaborative playlists, and enjoy watching and listening with others in real-time.
 
 ## Features
 
@@ -80,33 +80,13 @@ Groove Hub is deployed on Heroku. To deploy your own instance:
 - **Database**: SQLite (development), Heroku Postgres (production)
 - **APIs**: YouTube IFrame API for video playback
 
-## Contribution Guidelines
-
-Contributions are welcome! If you want to report a bug or request a feature, please open an issue on the [GitHub repository](https://github.com/blakebrandon-hub/groove-hub).
-
-To contribute code:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Open a pull request.
-
 ## Future Plans
 
 - **Login System**: Adding user authentication with Flask-Login.
 - **Moderator Tools**: Additional features to manage queues and user activity.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## Contact
 
 Created by Blake Brandon. For questions or feedback, feel free to reach out:
 - GitHub: [https://github.com/blakebrandon-hub](https://github.com/blakebrandon-hub)
 - Email: [blakebrandon.dev@gmail.com](mailto:blakebrandon.dev@gmail.com)
-
----
-
-Enjoy sharing music with friends and creating lasting memories with Groove Hub!
-
