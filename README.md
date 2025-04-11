@@ -16,6 +16,10 @@ Groove Hub is a chatroom where you can share music from YouTube, build collabora
 - **Customizable Video Settings**: Options for autoplay, mute, and resyncing videos.
 - **User-Friendly Interface**: Intuitive design with separate tabs for the video queue and chat.
 
+## 🚀 Live Demo
+
+🎧 Check out Groove Hub in action: [Live Demo](https://groovehub-1d4997d3b5cb.herokuapp.com/)
+
 ## Installation
 
 Follow these steps to set up Groove Hub locally:
