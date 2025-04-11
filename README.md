@@ -20,7 +20,7 @@ Groove Hub is a chatroom where you can share music from YouTube, build collabora
 
 ## 🚀 Live Demo
 
-🎧 Check out Groove Hub in action: [Live Demo](https://groovehub-1d4997d3b5cb.herokuapp.com/)
+🎧 Check out a live demo of [Groove Hub](https://groovehub-1d4997d3b5cb.herokuapp.com/).
 
 ## Installation
 
