@@ -2,6 +2,8 @@
 
 Groove Hub is a chatroom where you can share music from YouTube, build collaborative playlists, and enjoy watching and listening with others in real-time.
 
+![groove](https://github.com/user-attachments/assets/f47592d6-7933-48a2-a521-3f52f996c3dd)
+
 ## Features
 
 ### Core Features
