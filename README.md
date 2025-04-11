@@ -1,4 +1,4 @@
-# Groove Hub
+# 🎵 Groove Hub
 
 Groove Hub is a chatroom where you can share music from YouTube, build collaborative playlists, and enjoy watching and listening with others in real-time.
 
